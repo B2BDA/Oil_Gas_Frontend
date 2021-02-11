@@ -1,6 +1,6 @@
 from tensorflow import keras
 import numpy as np
-from tensorflow.keras.preprocessing.image import load_img
+# from tensorflow.keras.preprocessing.image import load_img
 from PIL import Image, ImageOps
 import streamlit as st
 model = keras.models.load_model("ship_classifier.h5")
