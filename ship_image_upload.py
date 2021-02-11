@@ -7,7 +7,7 @@ model = keras.models.load_model("ship_classifier.h5")
 st.title("Ship Classification")
 uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 class_dict = {'1':'Cargo', '2':'Military', '3':'Carrier', '4':'Cruise', '5':'Tankers'}
-
+ 
  
 print(uploaded_file)
 if uploaded_file is not None:
@@ -29,6 +29,7 @@ if uploaded_file is not None:
     
     if st.button("Predict"):
         predict = np.argmax(model.predict(img), axis = -1)
+        st.write(predict)
         predict = class_dict.get(str(np.argmax(model.predict(img), axis = -1)[0]+1))
         st.write("The ship is a : %s ship"%str(predict))
         # make a predicted_class variable and append in the above statement
