@@ -29,7 +29,7 @@ if uploaded_file is not None:
     
     if st.button("Predict"):
         predict = np.argmax(model.predict(img), axis = -1)
-        st.write(predict)
+        st.write(model.predict(img))
         predict = class_dict.get(str(np.argmax(model.predict(img), axis = -1)[0]+1))
         st.write("The ship is a : %s ship"%str(predict))
         # make a predicted_class variable and append in the above statement
