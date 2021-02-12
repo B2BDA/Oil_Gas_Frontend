@@ -20,16 +20,16 @@ if uploaded_file is not None:
     # data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
     #image sizing
     size = (224, 224)
-    image = ImageOps.fit(image, size, Image.ANTIALIAS)
+    image = image.resize(size)
 
     #turn the image into a numpy array
     image_array = np.asarray(image)
     img = np.expand_dims(image_array, axis = 0)
+    img = img/255
 
     
     if st.button("Predict"):
         predict = np.argmax(model.predict(img), axis = -1)
-        st.write(model.predict(img))
         predict = class_dict.get(str(np.argmax(model.predict(img), axis = -1)[0]+1))
         st.write("The ship is a : %s ship"%str(predict))
         # make a predicted_class variable and append in the above statement
