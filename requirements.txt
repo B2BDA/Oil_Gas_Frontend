@@ -1,4 +1,4 @@
-tensorflow==2.4.1
+tensorflow-cpu==2.4.1
 pymongo==3.11.2
 streamlit==0.74.1
 numpy==1.19.2
