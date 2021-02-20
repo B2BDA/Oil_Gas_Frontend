@@ -6,7 +6,8 @@ import streamlit as st
 from pymongo import MongoClient
 client = MongoClient("mongodb+srv://admin:admin@cluster0.42ai5.mongodb.net/test")
 
-model = keras.models.load_model("ship_classifier.h5")
+model1 = keras.models.load_model("ship_classifier.h5")
+model2 = keras.models.load_model("ship_classifier_vgg.h5")
 st.title("Ship Classification")
 uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 class_dict = {'1':'Cargo', '2':'Military', '3':'Carrier', '4':'Cruise', '5':'Tankers'}
@@ -36,14 +37,28 @@ if uploaded_file is not None:
     img = img/255
 
     
-    if st.button("Predict"):
-        rec = db[collection].find_one({'img_name':str(uploaded_file.name)})
+    # if st.button("Predict"):
+    option = st.radio( 'Choose Model?',('MobileNetV2', 'VGG16', 'ResNet'))
+    rec = db[collection].find_one({'img_name':str(uploaded_file.name)})
+    if option == 'MobileNetV2':
         if rec is None:
-            predict = np.argmax(model.predict(img), axis = -1)
-            predict = class_dict.get(str(np.argmax(model.predict(img), axis = -1)[0]+1))
+            # predict = np.argmax(model1.predict(img), axis = -1)
+            predict = class_dict.get(str(np.argmax(model1.predict(img), axis = -1)[0]+1))
             st.write("The ship is a : %s ship"%str(predict))
             # make a predicted_class variable and append in the above statement
             db[collection].insert_one({'class': str(predict),'img_name': str(uploaded_file.name)})
         else:
             rec = rec.get('class')
             st.write("The ship is a : %s ship"%str(rec))
+    elif option == "VGG16":
+        if rec is None:
+            predict = np.argmax(model2.predict(img), axis = -1)
+            predict = class_dict.get(str(np.argmax(model2.predict(img), axis = -1)[0]+1))
+            st.write("The ship is a : %s ship"%str(predict))
+            # make a predicted_class variable and append in the above statement
+            db[collection].insert_one({'class': str(predict),'img_name': str(uploaded_file.name)})
+        else:
+            rec = rec.get('class')
+            st.write("The ship is a : %s ship"%str(rec))
+    else:
+        st.write("Model coming soon")
