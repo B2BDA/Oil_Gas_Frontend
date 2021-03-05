@@ -2,4 +2,3 @@
 .gitignore
 ship_classifier_custom.h5
 __pycache__/
-/APIs/
