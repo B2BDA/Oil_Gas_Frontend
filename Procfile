@@ -1,2 +1,2 @@
-web: sh setup.sh && streamlit run ship_image_upload.py
+web: gunicorn wsgi:app --reload
 
