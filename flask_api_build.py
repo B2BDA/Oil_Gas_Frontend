@@ -6,6 +6,17 @@ from io import BytesIO
 from tensorflow import keras
 from PIL import Image
 import numpy as np
+from pymongo import MongoClient
+import base64
+client = MongoClient("mongodb+srv://admin:admin@cluster0.42ai5.mongodb.net/test")
+
+try:
+    db = client[client.list_database_names()[0]]
+    collection = db.list_collection_names()[0]
+except Exception as e:
+    pass
+finally:
+    pass
 
 # model = keras.models.load_model("ship_classifier_custom.h5")
 model = keras.models.load_model("ship_classifier.h5")
@@ -25,7 +36,7 @@ if not os.path.isdir(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 def read_imagefile(image):
     size = (224, 224)
@@ -68,8 +79,15 @@ def upload_file():
             flash('File successfully uploaded')
             image = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             img = read_imagefile(image)
-            prediction = predict(model,img)
-            print(prediction)
+            encoded_string = base64.b64encode(img)
+            rec = db[collection].find_one({'img_name':str(encoded_string)})
+            if rec is None:
+                prediction = predict(model,img)
+                print(prediction)
+                db[collection].insert_one({'class': str(prediction),'img_name': str(encoded_string)})
+                print("Files uploaded successfully")
+            else:
+                prediction = rec.get('class')
             return render_template('upload.html', result = prediction)
             # return prediction
         else:
